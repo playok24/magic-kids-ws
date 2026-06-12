@@ -1,21 +1,16 @@
 const WebSocket = require("ws");
 const http = require("http");
-const fs = require("fs");
-const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-    if (req.url === "/count") {
-        res.writeHead(200, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        });
-        res.end(JSON.stringify({ count: wss.clients.size }));
-        return;
-    }
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Magic Kids WS Server");
+    const count = wss ? wss.clients.size : 0;
+    const data = JSON.stringify({ status: "ok", count, path: req.url });
+    res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    });
+    res.end(data);
 });
 
 const wss = new WebSocket.Server({ server });
